@@ -34,6 +34,12 @@ const Dashboard = () => {
   const editTitle = async (e) => {
     e.preventDefault()
   }
+  const deleteResume = async (resumeId) => {
+    const confirmDelete = window.confirm('Are you sure you want to delete this resume?')
+    if (confirmDelete) {
+      setAllResumes((prev) => prev.filter((resume) => resume._id !== resumeId))
+    }
+  }
 
   useEffect(() => {
     loadAllResumes()
@@ -69,8 +75,8 @@ const Dashboard = () => {
                 duration-300 px-2 text-center' style={{ color: baseColor + '90' }}>
                   Updated on {new Date(resume.updatedAt).toLocaleDateString()}
                 </p>
-                <div className='absolute top-1 right-1 group-hover:flex items-center hidden'>
-                  <TrashIcon className='size-7 p-1.5 hover:bg-white/50 rounded text-slate-700 transition-colors' />
+                <div onClick={(e)=> e.stopPropagation()} className='absolute top-1 right-1 group-hover:flex items-center hidden'>
+                  <TrashIcon onClick={()=> deleteResume(resume._id)} className='size-7 p-1.5 hover:bg-white/50 rounded text-slate-700 transition-colors' />
                   <PencilIcon onClick={()=> {setEditResumeId(resume._id); setTitle(resume.title)}}
                    className='size-7 p-1.5 hover:bg-white/50 rounded text-slate-700 transition-colors' />
                 </div>
@@ -129,12 +135,12 @@ const Dashboard = () => {
         {editResumeId && (
           <form onSubmit={editTitle} className='fixed inset-0 bg-black/70 backdrop-blur bg-opacity-50 z-10 flex items-center justify-center'>
             <div onClick={(e) => { e.stopPropagation() }} className='relative bg-slate-50 shadow-md rounded-lg w-full max-w-sm p-6'>
-              <h2 className='text-xl font-bold mb-4'>Create a Resume</h2>
+              <h2 className='text-xl font-bold mb-4'>Edit Resume Title</h2>
               <input type="text" placeholder='Enter resume Title' value={title} onChange={(e) => setTitle(e.target.value)}
                 className='w-full px-4 py-2 mb-4 focus:border-green-600 ring-green-600' required />
-              <button className='w-full py-2 bg-green-600 text-white rounded hover:bg-green-700 transition-colors'>Create Resume</button>
+              <button className='w-full py-2 bg-green-600 text-white rounded hover:bg-green-700 transition-colors'>Update Title</button>
               <XIcon className='absolute top-4 right-4 text-slate-400 hover:text-slate-600 cursor-pointer transition-colors' onClick={() => {
-                setShowCreateResume(false);
+                setEditResumeId('');
                 setTitle('');
               }} />
             </div>
