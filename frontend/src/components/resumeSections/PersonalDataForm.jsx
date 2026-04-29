@@ -1,6 +1,6 @@
-import { BriefcaseBusiness, Globe, Mail, MapPin, Phone, User } from 'lucide-react'
 import React from 'react'
-import LinkedinIcon from './LinkedInIcon'
+import { BriefcaseBusiness, Globe, Mail, MapPin, Phone, User } from 'lucide-react'
+import LinkedinIcon from '../LinkedInIcon'
 
 const PersonalDataForm = ({ data, onChange, template, removeBackground, setRemoveBackground }) => {
     const handleChange = (field, value) => {

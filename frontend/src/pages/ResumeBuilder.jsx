@@ -2,10 +2,11 @@ import React, { useEffect, useState } from 'react'
 import { useParams, Link } from 'react-router-dom'
 import { dummyResumeData } from '../assets/assets'
 import { ArrowLeftIcon, Briefcase, ChevronLeft, ChevronRight, FileText, FolderIcon, GraduationCap, Sparkles, User } from 'lucide-react'
-import PersonalDataForm from '../components/PersonalDataForm'
+import PersonalDataForm from '../components/resumeSections/PersonalDataForm'
 import ResumePreview from '../components/ResumePreview'
 import TemplateSelector from '../components/TemplateSelector'
 import ColorPicker from '../components/ColorPicker'
+import SummaryForm from '../components/resumeSections/SummaryForm'
 
 const ResumeBuilder = () => {
   const { resumeId } = useParams()
@@ -74,9 +75,9 @@ const ResumeBuilder = () => {
                 </div>
 
                 <div className='flex items-center'>
-                  {activeSectionIdx !== 0 && (
+                  {activeSectionIdx > 0 && (
                     <button onClick={() => setActiveSectionIdx((prev) => Math.max(prev - 1, 0))} className='flex items-center gap-1 p-2.5 rounded-lg
-                     text-sm font-medium text-gray-600 hover:bg-gray-100 transition-all' disabled={activeSectionIdx === 0}>
+                     text-sm font-medium text-gray-600 hover:bg-gray-100 transition-all'>
                       <ChevronLeft className='size-4' /> Previous
                     </button>
                   )}
@@ -93,6 +94,9 @@ const ResumeBuilder = () => {
                 {activeSection.id === 'personal' && (
                   <PersonalDataForm data={resumeData.personal_info} onChange={(data)=> setResumeData(prev=> ({...prev,
                     personal_info: data}))} template={resumeData.template} removeBackground={removeBackground} setRemoveBackground={setRemoveBackground}/>
+                )}
+                {activeSection.id === 'summary' && (
+                  <SummaryForm data={resumeData.professional_summary} onChange={(data)=> setResumeData(prev=> ({...prev, professional_summary: data}))} setResumeData={setResumeData}/>
                 )}
               </div>
             </div>
