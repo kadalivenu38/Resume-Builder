@@ -8,7 +8,7 @@ export const dummyResumeData = [
             email: "alex@example.com",
             phone: "0 123456789",
             location: "NY, USA",
-            linkedin: "https://www.linkedin.com",
+            linkedin: "https://www.linkedin.com/in/alex",
             website: "https://www.example.com",
             profession: "Full Stack Developer",
             image: dummy_profile
@@ -65,7 +65,7 @@ export const dummyResumeData = [
                 _id: "68d2a31a1c4dd38875bb0382"
             }
         ],
-        template: "minimal-image",
+        template: "classic",
         accent_color: "#14B8A6",
         project: [
             {
@@ -140,7 +140,7 @@ export const dummyResumeData = [
                 _id: "78e3b42c2d5ff49286cc1493"
             }
         ],
-        template: "minimal-image",
+        template: "modern",
         accent_color: "#6366F1",
         project: [
             {

@@ -1,4 +1,5 @@
-import { Mail, Phone, MapPin, BriefcaseIcon, Globe } from "lucide-react";
+import { Mail, Phone, MapPin, Globe } from "lucide-react";
+import LinkedinIcon from '../LinkedInIcon'
 
 const ModernTemplate = ({ data, accentColor }) => {
 	const formatDate = (dateStr) => {
@@ -39,7 +40,7 @@ const ModernTemplate = ({ data, accentColor }) => {
 					)}
 					{data.personal_info?.linkedin && (
 						<a target="_blank" href={data.personal_info?.linkedin} className="flex items-center gap-2">
-							<BriefcaseIcon className="size-4" />
+							<LinkedinIcon />
 							<span className="break-all text-xs">{data.personal_info.linkedin.split("https://www.")[1] ? data.personal_info.linkedin.split("https://www.")[1] : data.personal_info.linkedin}</span>
 						</a>
 					)}

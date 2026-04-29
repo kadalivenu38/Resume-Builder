@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react'
-import { useParams, Link, data } from 'react-router-dom'
+import { useParams, Link } from 'react-router-dom'
 import { dummyResumeData } from '../assets/assets'
 import { ArrowLeftIcon, Briefcase, ChevronLeft, ChevronRight, FileText, FolderIcon, GraduationCap, Sparkles, User } from 'lucide-react'
 import PersonalDataForm from '../components/PersonalDataForm'
 import ResumePreview from '../components/ResumePreview'
+import TemplateSelector from '../components/TemplateSelector'
 
 const ResumeBuilder = () => {
   const { resumeId } = useParams()
@@ -64,7 +65,12 @@ const ResumeBuilder = () => {
 
               {/* Section Navigation */}
               <div className='flex justify-between items-center border-b-gray-300 py-1'>
-                <div></div>
+                {/* Template Selector */}
+                <div className='flex justify-between items-center mb-5 py-1'>
+                  <TemplateSelector selectedTemplate={resumeData.template}
+                  onChange={(template)=> setResumeData(prev=> ({...prev, template}))} />
+                </div>
+
                 <div className='flex items-center'>
                   {activeSectionIdx !== 0 && (
                     <button onClick={() => setActiveSectionIdx((prev) => Math.max(prev - 1, 0))} className='flex items-center gap-1 p-2.5 rounded-lg
@@ -85,7 +91,7 @@ const ResumeBuilder = () => {
               <div className='space-y-6'>
                 {activeSection.id === 'personal' && (
                   <PersonalDataForm data={resumeData.personal_info} onChange={(data)=> setResumeData(prev=> ({...prev,
-                    personal_info: data}))} removeBackground={removeBackground} setRemoveBackground={setRemoveBackground}/>
+                    personal_info: data}))} template={resumeData.template} removeBackground={removeBackground} setRemoveBackground={setRemoveBackground}/>
                 )}
               </div>
             </div>
