@@ -1,4 +1,4 @@
-import { Briefcase, Plus, Trash2 } from 'lucide-react'
+import { Briefcase, Plus, Sparkles, Trash2 } from 'lucide-react'
 import React from 'react'
 
 const ExperienceForm = ({ data, onChange }) => {
@@ -14,6 +14,8 @@ const ExperienceForm = ({ data, onChange }) => {
         onChange([...data, newExperience])
     }
     const removeExperience = (index) => {
+        const confirmDelete = window.confirm('Are you sure you want to delete this experience?')
+        if (!confirmDelete) return
         const updatedExperience = data.filter((_, i) => i !== index)
         onChange(updatedExperience)
     }
@@ -30,7 +32,7 @@ const ExperienceForm = ({ data, onChange }) => {
                     <h3 className='flex items-center gap-2 text-lg font-semibold text-gray-900'>Work Experience</h3>
                     <p className='text-sm text-gray-500'>Add your job experiences here</p>
                 </div>
-                <button onClick={addExperience} className='flex items-center gap-2 px-3 py-1 text-sm bg-purple-100 text-purple-700 rounded hover:bg-purple-200
+                <button onClick={addExperience} className='flex items-center gap-2 px-3 py-2 text-sm bg-green-100 text-green-700 rounded-lg hover:bg-green-200
                  transition-colors'>
                     <Plus className='size-4' />Add Experience
                 </button>
@@ -47,19 +49,37 @@ const ExperienceForm = ({ data, onChange }) => {
                         <div key={index} className='p-4 border border-gray-200 rounded-lg space-y-3'>
                             <div className='flex justify-between items-start'>
                                 <h4>Experience #{index + 1}</h4>
-                                <button onClick={() => removeExperience(index)} className='text-red-500 hover:text-red-700 transition-colors'>
-                                    <Trash2 className='size-4' />
+                                <button onClick={() => removeExperience(index)} className='text-red-500 p-2.5 rounded-full hover:bg-red-200
+                                    hover:text-red-700 transition-colors'>
+                                    <Trash2 className='size-5' />
                                 </button>
                             </div>
 
-                            {/* Input for Experience Details */}
-                            <div className='grid md:grid-cols-2 gap-3'>
+                            {/* Updating Input for Experience Details */}
+                            <div className='grid md:grid-cols-2 gap-3 mb-1'>
                                 <input type="text" value={experience.company || ""} onChange={(e) => updateExperience(index, 'company', e.target.value)}
                                     placeholder='Company Name' className='px-3 py-2 text-sm rounded-lg' />
                                 <input type="text" value={experience.position || ""} onChange={(e) => updateExperience(index, 'position', e.target.value)}
                                     placeholder='Job Title' className='px-3 py-2 text-sm rounded-lg' />
                                 <input type="month" value={experience.start_date || ""} onChange={(e) => updateExperience(index, 'start_date', e.target.value)}
                                     className='px-3 py-2 text-sm rounded-lg' />
+                                <input type="month" value={experience.is_current ? "" : experience.end_date} onChange={(e) => updateExperience(index, 'end_date', e.target.value)}
+                                    className='px-3 py-2 text-sm rounded-lg disabled:bg-gray-100' disabled={experience.is_current} />
+                            </div>
+                            <label className='flex items-center gap-1'>
+                                <input type="checkbox" checked={experience.is_current} onChange={(e) => updateExperience(index, 'is_current', e.target.checked)}/>
+                                <span className='text-sm text-gray-700'>Currently working here</span>
+                            </label>
+                            <div className='space-y-3 mt-5'>
+                                <div className='flex items-center justify-between'>
+                                    <label className='text-sm font-medium text-gray-700'>Job Description</label>
+                                    <button className='flex items-center gap-1 px-2 py-1 text-sm bg-purple-100 text-purple-700 rounded
+                                    hover:bg-purple-200 transition-colors disabled:opacity-50'>
+                                        <Sparkles className='w-3 h-3' />Enhance with AI
+                                    </button>
+                                </div>
+                                <textarea rows={4} value={experience.description || ''} onChange={(e)=> updateExperience(index, 'description', e.target.value)}
+                                className='w-full text-sm px-3 py-2 rounded-lg resize-none' placeholder='Describe your key responsibilities and achievements...'/>
                             </div>
                         </div>
                     ))}
