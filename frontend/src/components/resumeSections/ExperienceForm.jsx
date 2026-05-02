@@ -55,7 +55,7 @@ const ExperienceForm = ({ data, onChange }) => {
                                 </button>
                             </div>
 
-                            {/* Updating Input for Experience Details */}
+                            {/* Input for Experience Details */}
                             <div className='grid md:grid-cols-2 gap-3 mb-1'>
                                 <input type="text" value={experience.company || ""} onChange={(e) => updateExperience(index, 'company', e.target.value)}
                                     placeholder='Company Name' className='px-3 py-2 text-sm rounded-lg' />

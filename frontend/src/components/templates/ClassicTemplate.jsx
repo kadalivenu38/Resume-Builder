@@ -94,18 +94,21 @@ const ClassicTemplate = ({ data, accentColor }) => {
             )}
 
             {/* Projects */}
-            {data.project && data.project.length > 0 && (
+            {data.projects && data.projects.length > 0 && (
                 <section className="mb-4">
                     <h2 className="text-xl font-semibold mb-1" style={{ color: accentColor }}>
                         PROJECTS
                     </h2>
 
                     <ul className="space-y-2">
-                        {data.project.map((proj, index) => (
+                        {data.projects.map((project, index) => (
                             <div key={index} className="flex justify-between items-start border-l-3 border-gray-300 pl-4" style={{ borderColor: accentColor }}>
                                 <div>
-                                    <li className="font-semibold text-gray-800 ">{proj.name}</li>
-                                    <p className="text-gray-600" style={{ lineHeight: '1.3' }}>{proj.description}</p>
+                                    <div className="flex items-center justify-between">
+                                        <li className="text-lg font-semibold text-black ">{project.name}</li>
+                                        <p className="font-medium text-sm text-gray-600">{project.stack}</p>
+                                    </div>
+                                    <p className="text-gray-600" style={{ lineHeight: '1.3' }}>{project.description}</p>
                                 </div>
                             </div>
                         ))}
@@ -130,7 +133,6 @@ const ClassicTemplate = ({ data, accentColor }) => {
                                     <h3 className="font-medium text-gray-700">
                                         {edu.degree} {edu.field && `in ${edu.field}`}
                                     </h3>
-                                    <p className="text-gray-700">{edu.institution}</p>
                                     {edu.gpa && <p className="text-sm text-gray-600">GPA: {edu.gpa}</p>}
                                 </div>
                                 <div className="text-sm text-gray-600">

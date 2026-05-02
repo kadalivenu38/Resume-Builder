@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { useParams, Link } from 'react-router-dom'
+import { useParams, Link, data } from 'react-router-dom'
 import { dummyResumeData } from '../assets/assets'
 import { ArrowLeftIcon, Briefcase, ChevronLeft, ChevronRight, FileText, FolderIcon, GraduationCap, Sparkles, User } from 'lucide-react'
 import PersonalDataForm from '../components/resumeSections/PersonalDataForm'
@@ -9,6 +9,7 @@ import ColorPicker from '../components/ColorPicker'
 import SummaryForm from '../components/resumeSections/SummaryForm'
 import ExperienceForm from '../components/resumeSections/ExperienceForm'
 import EducationForm from '../components/resumeSections/EducationForm'
+import ProjectForm from '../components/resumeSections/ProjectForm'
 
 const ResumeBuilder = () => {
   const { resumeId } = useParams()
@@ -18,6 +19,7 @@ const ResumeBuilder = () => {
     personal_info: {},
     professional_summary: '',
     experience: [],
+    projects: [],
     education: [],
     skills: [],
     template: 'classic',
@@ -105,6 +107,9 @@ const ResumeBuilder = () => {
                 )}
                 {activeSection.id === 'education' && (
                   <EducationForm data={resumeData.education} onChange={(data)=> setResumeData(prev=> ({...prev, education: data}))} />
+                )}
+                {activeSection.id === 'projects' && (
+                  <ProjectForm data={resumeData.projects} onChange={(data)=> setResumeData((prev)=> ({...prev, projects: data}))}/>
                 )}
               </div>
             </div>

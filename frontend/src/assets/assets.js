@@ -18,7 +18,7 @@ export const dummyResumeData = [
         title: "Alex's Resume",
         public: true,
         professional_summary: "Highly analytical Data Analyst with 6 years of experience transforming complex datasets into actionable insights using SQL, Python, and advanced visualization tools. ",
-        skills: ["JavaScript", "React JS", "Full Stack Development", "Git", "GitHub", "NextJS", "Express", "NodeJS", "TypeScript"],
+        skills: ["JavaScript", "React JS", "Full Stack Development", "Git", "GitHub", "NextJS", "Express", "NodeJS", "stackScript"],
         experience: [
             {
                 company: "Example Technologies.",
@@ -67,16 +67,16 @@ export const dummyResumeData = [
         ],
         template: "classic",
         accent_color: "#14B8A6",
-        project: [
+        projects: [
             {
                 name: "Team Task Management System",
-                type: "Web Application (Productivity Tool)",
+                stack: "Web Application (Productivity Tool)",
                 description: "TaskTrackr is a collaborative task management system designed for teams to create, assign, track, and manage tasks in real time. ",
                 _id: "68d4f882c8f0d46dc8a8b139"
             },
             {
                 name: "EduHub - Online Learning Platform",
-                type: "Web Application (EdTech Platform)",
+                stack: "Web Application (EdTech Platform)",
                 description: "EduHub is an online learning platform where instructors can create courses with video lessons, quizzes, and downloadable resources.",
                 _id: "68d4f89dc8f0d46dc8a8b147"
             }
@@ -145,13 +145,13 @@ export const dummyResumeData = [
         project: [
             {
                 name: "FitTrack - Fitness Dashboard",
-                type: "Web Application (Health & Fitness)",
+                stack: "Web Application (Health & Fitness)",
                 description: "FitTrack is a fitness analytics dashboard that allows users to log workouts, track progress, and visualize performance through interactive charts.",
                 _id: "78e3b42c2d5ff49286cc1494"
             },
             {
                 name: "ShopEase - E-commerce UI Kit",
-                type: "Frontend UI Kit",
+                stack: "Frontend UI Kit",
                 description: "ShopEase is a modular e-commerce frontend template with ready-to-use components for product listing, cart management, and responsive navigation.",
                 _id: "78e3b42c2d5ff49286cc1495"
             }
@@ -220,13 +220,13 @@ export const dummyResumeData = [
         project: [
             {
                 name: "Invoicr - Invoice Management System",
-                type: "Web Application (FinTech)",
+                stack: "Web Application (FinTech)",
                 description: "Invoicr is a secure web platform that allows freelancers and small businesses to generate, track, and automate professional invoices. Built with Node.js, MongoDB, and Stripe integration.",
                 _id: "89f4c53d3e6gg59397dd259l"
             },
             {
                 name: "API Monitor Dashboard",
-                type: "DevOps Tool",
+                stack: "DevOps Tool",
                 description: "A real-time API monitoring dashboard for microservices. Tracks latency, uptime, and error rates using Prometheus and Grafana.",
                 _id: "89f4c53d3e6gg59397dd259m"
             }
