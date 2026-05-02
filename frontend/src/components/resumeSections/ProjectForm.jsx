@@ -29,8 +29,8 @@ const ProjectForm = ({ data, onChange }) => {
           <h3 className='flex items-center gap-2 text-lg font-semibold text-gray-900'>Projects</h3>
           <p className='text-sm text-gray-500'>Add your Projects here</p>
         </div>
-        <button onClick={addProject} className='flex items-center gap-2 px-3 py-2 text-sm bg-green-100 text-green-700 rounded-lg hover:bg-green-200
-                 transition-colors'>
+        <button onClick={addProject} className='flex items-center gap-2 px-3 py-2 text-sm bg-green-500 text-white rounded-lg
+        hover:bg-green-700 transition-colors'>
           <Plus className='size-4' />Add Project
         </button>
       </div>
@@ -57,14 +57,14 @@ const ProjectForm = ({ data, onChange }) => {
                 <input type="text" value={project.name || ""} onChange={(e) => updateProject(index, 'name', e.target.value)}
                   placeholder='Project Name' className='px-3 py-2 text-sm rounded-lg' />
                 <input type="text" value={project.stack || ""} onChange={(e) => updateProject(index, 'stack', e.target.value)}
-                  placeholder='Tech Stack' className='px-3 py-2 text-sm rounded-lg' />
+                  placeholder='Tech Stack' className='px-3 py-2 text-sm rounded-lg' maxLength={75} />
               </div>
               <div className='space-y-3 mt-5'>
                 <div className='flex items-center justify-between'>
                   <label className='text-sm font-medium text-gray-700'>Project Description</label>
                   <button className='flex items-center gap-1 px-2 py-1 text-sm bg-purple-100 text-purple-700 rounded
-                  hover:bg-purple-200 transition-colors disabled:opacity-50'>
-                    <Sparkles className='w-3 h-3' />Enhance with AI
+                  hover:bg-purple-300 transition-colors disabled:opacity-50'>
+                    <Sparkles className='size-4' />AI Enhance
                   </button>
                 </div>
                 <textarea rows={5} value={project.description || ''} onChange={(e) => updateProject(index, 'description', e.target.value)}

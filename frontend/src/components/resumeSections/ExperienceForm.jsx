@@ -32,8 +32,8 @@ const ExperienceForm = ({ data, onChange }) => {
                     <h3 className='flex items-center gap-2 text-lg font-semibold text-gray-900'>Work Experience</h3>
                     <p className='text-sm text-gray-500'>Add your job experiences here</p>
                 </div>
-                <button onClick={addExperience} className='flex items-center gap-2 px-3 py-2 text-sm bg-green-100 text-green-700 rounded-lg hover:bg-green-200
-                 transition-colors'>
+                <button onClick={addExperience} className='flex items-center gap-2 px-3 py-2 text-sm bg-green-500 text-white rounded-lg
+                hover:bg-green-700 transition-colors'>
                     <Plus className='size-4' />Add Experience
                 </button>
             </div>
@@ -73,9 +73,9 @@ const ExperienceForm = ({ data, onChange }) => {
                             <div className='space-y-3 mt-5'>
                                 <div className='flex items-center justify-between'>
                                     <label className='text-sm font-medium text-gray-700'>Job Description</label>
-                                    <button className='flex items-center gap-1 px-2 py-1 text-sm bg-purple-100 text-purple-700 rounded
-                                    hover:bg-purple-200 transition-colors disabled:opacity-50'>
-                                        <Sparkles className='w-3 h-3' />Enhance with AI
+                                    <button className='flex items-center gap-2 px-3 py-1 text-sm bg-purple-100 text-purple-700 rounded
+                                    hover:bg-purple-300 transition-colors disabled:opacity-50'>
+                                        <Sparkles className='size-4' />AI Enhance
                                     </button>
                                 </div>
                                 <textarea rows={4} value={experience.description || ''} onChange={(e)=> updateExperience(index, 'description', e.target.value)}

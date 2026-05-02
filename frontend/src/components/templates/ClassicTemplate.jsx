@@ -104,11 +104,15 @@ const ClassicTemplate = ({ data, accentColor }) => {
                         {data.projects.map((project, index) => (
                             <div key={index} className="flex justify-between items-start border-l-3 border-gray-300 pl-4" style={{ borderColor: accentColor }}>
                                 <div>
-                                    <div className="flex items-center justify-between">
+                                    <div className="flex items-center justify-between gap-8">
                                         <li className="text-lg font-semibold text-black ">{project.name}</li>
                                         <p className="font-medium text-sm text-gray-600">{project.stack}</p>
                                     </div>
-                                    <p className="text-gray-600" style={{ lineHeight: '1.3' }}>{project.description}</p>
+                                    {project.description && (
+                                        <div className="text-gray-700 leading-relaxed whitespace-pre-line" style={{ lineHeight: '1.3' }}>
+                                            {project.description}
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         ))}
