@@ -1,6 +1,7 @@
-import User from "../models/User.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import User from "../models/User.js";
+import Resume from "../models/Resume.js";
 
 // Signup functionality
 export const register = async (req, res) => {
@@ -84,3 +85,13 @@ export const getProfile = async (req, res) => {
     return res.status(500).json({ message: err.message });
   }
 };
+
+// Get User Resumes
+export const getUserResumes = async (req, res) => {
+  try {
+    const resumes = await Resume.find({ userId: req.userId });
+    return res.status(200).json({ resumes: resumes });
+  } catch (err) {
+    return res.status(500).json({ message: err.message });
+  }
+}

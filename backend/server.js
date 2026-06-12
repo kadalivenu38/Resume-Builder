@@ -3,6 +3,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 dotenv.config();
 import dbConn from "./config/db.js";
+import userRouter from "./routes/userRoutes.js";
 
 const app = express();
 await dbConn();
@@ -16,6 +17,7 @@ app.use(express.urlencoded({ extended: true }));
 app.get("/", (req, res) => {
   res.send("Server is running...");
 });
+app.use("/api/user", userRouter);
 
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
