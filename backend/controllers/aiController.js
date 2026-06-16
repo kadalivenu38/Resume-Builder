@@ -64,7 +64,7 @@ export const enhanceDescription = async (req, res) => {
 };
 
 // controller for extracting data from uploaded resume
-export const extracResumetData = async (req, res) => {
+export const extractResumeData = async (req, res) => {
   try {
     const userId = req.userId;
     const { resume, title } = req.body;
