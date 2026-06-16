@@ -1,4 +1,4 @@
-import bcrypt from "bcryptjs";
+import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import User from "../models/User.js";
 import Resume from "../models/Resume.js";
@@ -18,7 +18,7 @@ export const register = async (req, res) => {
     }
 
     // create new user
-    const hashedPassword = await bcrypt.hashedPassword(password, 10);
+    const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = await User.create({
       name,
       email,
@@ -35,7 +35,7 @@ export const register = async (req, res) => {
       .status(201)
       .json({ message: "User created successfully", user: newUser, token });
   } catch (err) {
-    return res.status(500).json({ message: error.message });
+    return res.status(500).json({ message: err.message });
   }
 };
 
@@ -54,7 +54,8 @@ export const login = async (req, res) => {
     }
 
     // check if password is valid or not
-    if (!user.comparePassword(password)) {
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
       return res.status(400).json({ message: "Invalid email or password" });
     }
 
@@ -86,7 +87,7 @@ export const getProfile = async (req, res) => {
   }
 };
 
-// Get User Resumes
+// Get all User Resumes
 export const getUserResumes = async (req, res) => {
   try {
     const resumes = await Resume.find({ userId: req.userId });

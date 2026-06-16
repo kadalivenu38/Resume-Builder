@@ -1,9 +1,10 @@
+import "dotenv/config";
 import express from "express";
 import cors from "cors";
-import dotenv from "dotenv";
-dotenv.config();
 import dbConn from "./config/db.js";
 import userRouter from "./routes/userRoutes.js";
+import resumeRouter from "./routes/resumeRoutes.js";
+import aiRouter from "./routes/aiRoutes.js";
 
 const app = express();
 await dbConn();
@@ -18,6 +19,8 @@ app.get("/", (req, res) => {
   res.send("Server is running...");
 });
 app.use("/api/user", userRouter);
+app.use("/api/resume", resumeRouter);
+app.use("/api/ai", aiRouter);
 
 const PORT = process.env.PORT || 4000;
 app.listen(PORT, () => {
