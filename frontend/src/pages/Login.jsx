@@ -1,7 +1,12 @@
 import { Mail, User2Icon, Lock } from 'lucide-react'
 import React from 'react'
+import api from '../configs/api'
+import { useDispatch } from 'react-redux'
+import { login } from '../../store/features/authSlice'
+import toast from 'react-hot-toast'
 
 const Login = () => {
+  const dispatch = useDispatch()
   const query = new URLSearchParams(window.location.search)
   const urlstate = query.get('state')
   const [state, setState] = React.useState(urlstate || "login")
@@ -12,9 +17,17 @@ const Login = () => {
     password: ''
   })
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-
+    try {
+      const { data } = await api.post(`/api/user/${state}`, formData)
+      dispatch(login(data))
+      localStorage.setItem('token', data.token)
+      toast.success(data.message)
+    } catch (err) {
+      toast.error(err?.response?.data?.message || err.message)
+      console.log(err.message);
+    }
   }
 
   const handleChange = (e) => {
@@ -60,7 +73,10 @@ const Login = () => {
           {state === "login" ? "Login" : "Sign up"}
         </button>
 
-        <p onClick={() => setState(prev => prev === "login" ? "register" : "login")} className="text-gray-400 text-sm mt-3 mb-11 cursor-pointer" >
+        <p onClick={() => {
+          setState(prev => prev === "login" ? "register" : "login")
+          setFormData({ name: '', email: '', password: '' })
+        }} className="text-gray-400 text-sm mt-3 mb-11 cursor-pointer" >
           {state === "login" ? "Don't have an account?" : "Already have an account?"}
           <span className="text-green-400 hover:underline ml-1">click here</span>
         </p>

@@ -1,12 +1,19 @@
 import React from 'react'
+import { useDispatch, useSelector } from 'react-redux'
 import { Link, useNavigate } from 'react-router-dom'
+import { logout } from '../../store/features/authSlice'
+import toast from 'react-hot-toast'
 
 const Navbar = () => {
-    const user = {name: 'Kadali Venu'}
+    const { user } = useSelector(state => state.auth)
+    const dispatch = useDispatch()
     const navigate = useNavigate()
 
     const logoutUser = () => {
         navigate('/')
+        dispatch(logout())
+        localStorage.removeItem('token')
+        toast.success('Logout Successfull')
     }
   return (
     <div className='shadow bg-white'>

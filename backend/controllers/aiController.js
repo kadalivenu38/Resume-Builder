@@ -67,9 +67,9 @@ export const enhanceDescription = async (req, res) => {
 export const extractResumeData = async (req, res) => {
   try {
     const userId = req.userId;
-    const { resume, title } = req.body;
-    if (!resume) {
-      return res.status(400).json({ message: "Description is required" });
+    const { resumeText, title } = req.body;
+    if (!resumeText) {
+      return res.status(400).json({ message: "Missing fields required" });
     }
 
     // Call the AI service to extract the data from uploaded resume
@@ -82,7 +82,7 @@ export const extractResumeData = async (req, res) => {
         },
         {
           role: "user",
-          content: `extract data from this resume: ${resume}.
+          content: `extract data from this resume: ${resumeText}.
           Provide data in the following JSON format with no additional text before or after:
           {
             professional_summary: { type: String },

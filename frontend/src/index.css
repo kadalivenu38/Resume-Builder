@@ -15,4 +15,24 @@
   textarea {
     @apply outline-none focus:ring-1 border border-gray-400 focus:ring-blue-500 focus:border-blue-500 rounded-lg resize-none;
   }
+  /* Prevent browser autofill from changing input background and text color */
+  input:-webkit-autofill,
+  textarea:-webkit-autofill,
+  input:-webkit-autofill:focus,
+  textarea:-webkit-autofill:focus,
+  input:-webkit-autofill:hover,
+  textarea:-webkit-autofill:hover {
+    -webkit-box-shadow: 0 0 0 1000px transparent inset !important;
+    box-shadow: 0 0 0 1000px transparent inset !important;
+    -webkit-text-fill-color: #ffffff !important;
+    transition: background-color 5000s ease-in-out 0s !important;
+  }
+
+  /* Ensure focus doesn't add an unexpected background inside custom input wrappers */
+  input:focus,
+  textarea:focus {
+    background-color: transparent !important;
+    box-shadow: none !important;
+    outline: none !important;
+  }
 }
