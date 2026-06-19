@@ -1,5 +1,7 @@
 import openai from "../config/openai.js";
 import Resume from "../models/Resume.js";
+import { PDFParse } from "pdf-parse";
+import mammoth from "mammoth";
 
 // controller for AI-enhanced professional summary
 export const enhanceSummary = async (req, res) => {
@@ -67,80 +69,159 @@ export const enhanceDescription = async (req, res) => {
 export const extractResumeData = async (req, res) => {
   try {
     const userId = req.userId;
-    const { resumeText, title } = req.body;
-    if (!resumeText) {
-      return res.status(400).json({ message: "Missing fields required" });
+    const { title } = req.body;
+    const file = req.file;
+    if (!file) {
+      return res.status(400).json({
+        message: "Resume file is required",
+      });
     }
 
-    // Call the AI service to extract the data from uploaded resume
+    let resumeText = "";
+    // PDF
+    if (file.mimetype === "application/pdf") {
+      const parser = new PDFParse({
+        data: file.buffer,
+      });
+      const result = await parser.getText();
+      resumeText = result.text;
+    }
+    // DOCX
+    else if (
+      file.mimetype ===
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+    ) {
+      const docData = await mammoth.extractRawText({
+        buffer: file.buffer,
+      });
+
+      resumeText = docData.value;
+    }
+    // Unsupported file
+    else {
+      return res.status(400).json({
+        message: "Only PDF and DOCX files are supported",
+      });
+    }
+
+    if (!resumeText.trim()) {
+      return res.status(400).json({
+        message: "Could not extract text from resume",
+      });
+    }
+
     const response = await openai.chat.completions.create({
-      model: "gemini-3.5-flash",
+      model: "gemini-2.5-flash",
+      response_format: {
+        type: "json_object",
+      },
       messages: [
         {
           role: "system",
-          content: "Your are an expert AI Agent to extract data from resume.",
+          content: `
+          You are an expert Resume Parsing AI.
+          Extract resume information and return ONLY valid JSON.
+          Rules:
+          - Return only JSON.
+          - No markdown.
+          - No explanations.
+          - Use empty strings when values are missing.
+          - Use empty arrays when sections are missing.
+          - Keep all dates as strings exactly as they appear in the resume.
+          - Detect social profile URLs when available.`,
         },
         {
           role: "user",
-          content: `extract data from this resume: ${resumeText}.
-          Provide data in the following JSON format with no additional text before or after:
+          content: `Resume Text: ${resumeText}.
+          Return JSON in exactly this structure:
           {
-            professional_summary: { type: String },
-            skills: [{ type: String }],
-            personal_info: {
-                image: { type: String, default: "" },
-                full_name: { type: String, required: true },
-                job_role: { type: String, default: "" },
-                email: { type: String, required: true },
-                phone: { type: String, required: true },
-                location: { type: String, default: "" },
-                linkedin: { type: String, default: "" },
-                github: { type: String },
-                leetcode: { type: String },
-                hackerrank: { type: String },
-                codeforces: { type: String },
-                geeksforgeeks: { type: String },
-                website: { type: String },
+            "professional_summary": "",
+            "skills": [],
+
+            "personal_info": {
+              "full_name": "",
+              "job_role": "",
+              "email": "",
+              "phone": "",
+              "location": "",
+              "linkedin": "",
+              "website": ""
             },
-            experience: [
-                {
-                    company: { type: String, required: true },
-                    position: { type: String, required: true },
-                    start_date: { type: Date },
-                    end_date: { type: Date },
-                    description: { type: String },
-                    is_current: { type: Boolean, default: false },
-                },
+            "experience": [
+              {
+                "company": "",
+                "position": "",
+                "start_date": "",
+                "end_date": "",
+                "description": "",
+                "is_current": false
+              }
             ],
-            projects: [
-                {
-                    name: { type: String, required: true },
-                    description: { type: String },
-                    link: { type: String },
-                }
+            "projects": [
+              {
+                "name": "",
+                "description": "",
+                "link": ""
+              }
             ],
-            education: [
-                {
-                    institution: { type: String, required: true },
-                    degree: { type: String, required: true },
-                    field_of_study: { type: String, required: true },
-                    start_date: { type: Date },
-                    graduation_date: { type: Date, required: true },
-                    score: { type: String, required: true },
-                    is_current: { type: Boolean, default: false },
-                }
+            "education": [
+              {
+                "institution": "",
+                "degree": "",
+                "field_of_study": "",
+                "start_date": "",
+                "graduation_date": "",
+                "score": "",
+                "is_current": false
+              }
             ]
-        }`,
+          }`,
         },
       ],
-      response_format: { type: "json_object" },
     });
-    const extractedData = response.choices[0].message.content;
-    const parsedData = JSON.parse(data);
-    const newResume = await Resume.create({ userId, title, ...parsedData });
+    const aiContent = response.choices[0].message.content;
+    let parsedData;
+    try {
+      parsedData = JSON.parse(aiContent);
+    } catch (error) {
+      console.error("AI JSON Parse Error:", aiContent);
 
-    return res.status(200).json({ resumeId: newResume._id });
+      return res.status(500).json({
+        success: false,
+        message: "Failed to parse AI response",
+      });
+    }
+
+    parsedData.skills = Array.isArray(parsedData.skills)
+      ? parsedData.skills
+      : [];
+
+    parsedData.experience = Array.isArray(parsedData.experience)
+      ? parsedData.experience
+      : [];
+
+    parsedData.projects = Array.isArray(parsedData.projects)
+      ? parsedData.projects
+      : [];
+
+    parsedData.education = Array.isArray(parsedData.education)
+      ? parsedData.education
+      : [];
+
+    const newResume = await Resume.create({
+      userId,
+      title: title || "Untitled Resume",
+      ...parsedData,
+    });
+
+    return res.status(201).json({ resumeId: newResume._id });
   } catch (err) {
+    if (err.code === "LIMIT_FILE_SIZE") {
+      return res.status(400).json({
+        success: false,
+        message: "File size should not exceed 5MB",
+      });
+    }
     return res.status(500).json({ message: err.message });
   }
 };

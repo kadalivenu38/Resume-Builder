@@ -2,8 +2,12 @@ import { FilePenLineIcon, PencilIcon, PlusIcon, TrashIcon, UploadCloud, UploadCl
 import React, { useEffect, useState } from 'react'
 import { dummyResumeData } from '../assets/assets'
 import { useNavigate } from 'react-router-dom'
+import { useSelector } from 'react-redux'
+import api from '../configs/api'
+import toast from 'react-hot-toast'
 
 const Dashboard = () => {
+  const { user, token } = useSelector(state => state.auth)
   const colors = [
     '#3B82F6',
     '#22C55E',
@@ -16,20 +20,55 @@ const Dashboard = () => {
   const [title, setTitle] = useState('')
   const [resume, setResume] = useState(null)
   const [editResumeId, setEditResumeId] = useState('')
+  const [isLoading, setIsLoading] = useState(false)
   const navigate = useNavigate()
 
   const loadAllResumes = async () => {
     setAllResumes(dummyResumeData)
   }
   const createResume = async (e) => {
-    e.preventDefault()
-    setShowCreateResume(false)
-    navigate(`/app/builder/${title}`)
+    try {
+      e.preventDefault();
+      const { data } = await api.post('/api/resume/create', { title, },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        })
+      setAllResumes([...allResumes, data.resume])
+      setTitle('')
+      setShowCreateResume(false)
+      navigate(`/app/builder/${data.resume._id}`)
+    } catch (err) {
+      toast.error(err?.response?.data?.message || err.message)
+    }
   }
   const uploadResume = async (e) => {
     e.preventDefault()
-    setShowUploadResume(false)
-    navigate(`/app/builder/${title}`)
+    try {
+      if (!resume) {
+        return toast.error(
+          "Please select a resume file"
+        );
+      }
+      setIsLoading(true)
+      const formData = new FormData()
+      formData.append("title", title)
+      formData.append("resume", resume)
+      const { data } = await api.post('/api/ai/upload-resume', formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        })
+      setTitle('')
+      setResume(null)
+      setShowUploadResume(false)
+      navigate(`/app/builder/${data.resumeId}`)
+    } catch (err) {
+      toast.error(err?.response?.data?.message || err.message)
+    }
+    setIsLoading(false)
   }
   const editTitle = async (e) => {
     e.preventDefault()
@@ -65,7 +104,7 @@ const Dashboard = () => {
           {allResumes.map((resume, idx) => {
             const baseColor = colors[idx % colors.length]
             return (
-              <button key={idx} onClick={()=> navigate(`/app/builder/${resume._id}`)} className='relative w-full sm:max-w-36 h-48 flex flex-col items-center
+              <button key={idx} onClick={() => navigate(`/app/builder/${resume._id}`)} className='relative w-full sm:max-w-36 h-48 flex flex-col items-center
               justify-center rounded-lg gap-2 border group hover:shadow-lg transition-all duration-300 cursor-pointer'
                 style={{ background: `linear-gradient(135deg, ${baseColor}10, ${baseColor}40)`, borderColor: baseColor + '40' }}>
                 <FilePenLineIcon className='size-8 group-hover:scale-105 transition-all' style={{ color: baseColor }} />
@@ -75,10 +114,10 @@ const Dashboard = () => {
                 duration-300 px-2 text-center' style={{ color: baseColor + '90' }}>
                   Updated on {new Date(resume.updatedAt).toLocaleDateString()}
                 </p>
-                <div onClick={(e)=> e.stopPropagation()} className='absolute top-1 right-1 group-hover:flex items-center hidden'>
-                  <TrashIcon onClick={()=> deleteResume(resume._id)} className='size-7 p-1.5 hover:bg-white/50 rounded text-slate-700 transition-colors' />
-                  <PencilIcon onClick={()=> {setEditResumeId(resume._id); setTitle(resume.title)}}
-                   className='size-7 p-1.5 hover:bg-white/50 rounded text-slate-700 transition-colors' />
+                <div onClick={(e) => e.stopPropagation()} className='absolute top-1 right-1 group-hover:flex items-center hidden'>
+                  <TrashIcon onClick={() => deleteResume(resume._id)} className='size-7 p-1.5 hover:bg-white/50 rounded text-slate-700 transition-colors' />
+                  <PencilIcon onClick={() => { setEditResumeId(resume._id); setTitle(resume.title) }}
+                    className='size-7 p-1.5 hover:bg-white/50 rounded text-slate-700 transition-colors' />
                 </div>
               </button>
             )
@@ -89,8 +128,8 @@ const Dashboard = () => {
           <form onSubmit={createResume} className='fixed inset-0 bg-black/70 backdrop-blur bg-opacity-50 z-10 flex items-center justify-center'>
             <div onClick={(e) => { e.stopPropagation() }} className='relative bg-slate-50 shadow-md rounded-lg w-full max-w-sm p-6'>
               <h2 className='text-xl font-bold mb-4'>Edit Resume Title</h2>
-              <input type="text" placeholder='Enter resume Title' value={title} onChange={(e)=> setTitle(e.target.value)}
-               className='w-full px-4 py-2 mb-4 focus:border-green-600 ring-green-600' required />
+              <input type="text" placeholder='Enter resume Title' value={title} onChange={(e) => setTitle(e.target.value)}
+                className='w-full px-4 py-2 mb-4 focus:border-green-600 ring-green-600' required />
               <button className='w-full py-2 bg-green-600 text-white rounded hover:bg-green-700 transition-colors'>Upload</button>
               <XIcon className='absolute top-4 right-4 text-slate-400 hover:text-slate-600 cursor-pointer transition-colors' onClick={() => {
                 setEditResumeId('');
@@ -104,8 +143,8 @@ const Dashboard = () => {
           <form onSubmit={uploadResume} className='fixed inset-0 bg-black/70 backdrop-blur bg-opacity-50 z-10 flex items-center justify-center'>
             <div onClick={(e) => { e.stopPropagation() }} className='relative bg-slate-50 shadow-md rounded-lg w-full max-w-sm p-6'>
               <h2 className='text-xl font-bold mb-4'>Upload a Resume</h2>
-              <input type="text" placeholder='Enter resume Title' value={title} onChange={(e)=> setTitle(e.target.value)}
-               className='w-full px-4 py-2 mb-4 focus:border-green-600 ring-green-600' required />
+              <input type="text" placeholder='Enter resume Title' value={title} onChange={(e) => setTitle(e.target.value)}
+                className='w-full px-4 py-2 mb-4 focus:border-green-600 ring-green-600' required />
               <div>
                 <label htmlFor="resume-input" className='block text-sm text-slate-700'>
                   Select Resume File
@@ -115,15 +154,35 @@ const Dashboard = () => {
                       <p className='text-green-700'>{resume.name}</p>
                     ) : (
                       <>
-                        <UploadCloud className='size-14 stroke-1'/>
+                        <UploadCloud className='size-14 stroke-1' />
                         <p className='text-sm'>Click to upload your resume (PDF, DOCX)</p>
                       </>
                     )}
                   </div>
                 </label>
-                <input type="file" id='resume-input' accept='.pdf, .docx' hidden onChange={(e)=> setResume(e.target.files[0])}/>
+                <input type="file" id='resume-input' accept='.pdf, .docx' hidden onChange={(e) => {
+                  const file = e.target.files[0];
+                  if (!file) return;
+
+                  const allowedTypes = [
+                    "application/pdf",
+                    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                  ];
+                  if (!allowedTypes.includes(file.type)) {
+                    toast.error("Only PDF and DOCX files are allowed");
+                    return;
+                  }
+                  if (file.size > 5 * 1024 * 1024) {
+                    toast.error("File size should not exceed 5MB");
+                    return;
+                  }
+                  setResume(file);
+                }} />
               </div>
-              <button className='w-full py-2 bg-green-600 text-white rounded hover:bg-green-700 transition-colors'>Upload Resume</button>
+              <button className='w-full py-2 bg-green-600 text-white rounded hover:bg-green-700 transition-colors disabled:opacity-50
+               disabled:cursor-not-allowed' disabled={!resume || isLoading}>
+                Upload Resume
+              </button>
               <XIcon className='absolute top-4 right-4 text-slate-400 hover:text-slate-600 cursor-pointer transition-colors' onClick={() => {
                 setShowUploadResume(false);
                 setTitle('');

@@ -20,16 +20,14 @@ function App() {
         const { data } = await api.get('/api/user/profile',
           {
             headers: {
-              Authorization: token
+              Authorization: `Bearer ${token}`
             }
           })
         if (data.user) {
           dispatch(login({ token, user: data.user }))
         }
-        dispatch(setLoading(false))
-      } else {
-        dispatch(setLoading(false))
       }
+      dispatch(setLoading(false))
     } catch (err) {
       dispatch(setLoading(false))
       console.log(err.message)
