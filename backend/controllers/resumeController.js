@@ -1,12 +1,15 @@
 import Resume from "../models/Resume.js";
-import fs from "fs";
+import imgKit from "../config/imagkit.js";
 
 // Creating new Resume
 export const createResume = async (req, res) => {
   try {
     const userId = req.userId;
     const { title } = req.body;
-    const newResume = await Resume.create({ userId, title });
+    const newResume = await Resume.create({
+      userId,
+      ...(title?.trim() && { title }),
+    });
 
     return res
       .status(201)
@@ -70,20 +73,22 @@ export const getResumeToView = async (req, res) => {
 export const updateResume = async (req, res) => {
   try {
     const userId = req.userId;
-    const { resumeId } = req.params;
-    const { resumeData, removeBackground } = req.body;
-    let resumeDataCopy = JSON.parse(resumeData);
+    const { resumeId, resumeData, removeBackground } = req.body;
+    let resumeDataCopy =
+      typeof resumeData === "string"
+        ? JSON.parse(resumeData)
+        : structuredClone(resumeData);
 
     const image = req.file;
     if (image) {
       const response = await imgKit.files.upload({
-        file: fs.createReadStream(image.path),
-        fileName: "resume.png",
+        file: image.buffer.toString("base64"),
+        fileName: image.originalname,
         folder: "user-resumes",
         transformation: {
           pre:
-            "w-300, h-300, fo-face, z-0.75," +
-            (removeBackground ? " e-bgremoval" : ""),
+            "w-300,h-300,fo-face,z-0.50" +
+            (removeBackground ? ",e-bgremove" : ""),
         },
       });
       resumeDataCopy.personal_info.image = response.url;
@@ -92,7 +97,7 @@ export const updateResume = async (req, res) => {
     const updatedResume = await Resume.findOneAndUpdate(
       { userId, _id: resumeId },
       resumeDataCopy,
-      { new: true },
+      { returnDocument: "after" },
     );
 
     if (!updatedResume) {

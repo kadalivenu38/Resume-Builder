@@ -1,4 +1,4 @@
-import { Briefcase, Plus, Trash2 } from 'lucide-react'
+import { GraduationCap, Plus, Trash2 } from 'lucide-react'
 import React from 'react'
 
 const EducationForm = ({ data, onChange }) => {
@@ -40,7 +40,7 @@ const EducationForm = ({ data, onChange }) => {
             </div>
             {data.length === 0 ? (
                 <div className='text-center py-8 text-gray-500'>
-                    <Briefcase className='w-12 h-12 mx-auto mb-3 text-gray-300' />
+                    <GraduationCap className='w-14 h-14 mx-auto mb-2 text-gray-300' />
                     <p>Education details not added yet.</p>
                     <p className='text-sm'>Click "Add Education" to start building your resume.</p>
                 </div>

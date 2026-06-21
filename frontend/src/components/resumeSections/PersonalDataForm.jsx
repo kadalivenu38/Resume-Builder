@@ -12,7 +12,7 @@ const PersonalDataForm = ({ data, onChange, template, removeBackground, setRemov
         { key: 'email', label: 'Email', icon: Mail, type: 'email', required: true },
         { key: 'phone', label: 'Phone Number', icon: Phone, type: 'tel' },
         { key: 'location', label: 'Location', icon: MapPin, type: 'text' },
-        { key: 'profession', label: 'Profession', icon: BriefcaseBusiness, type: 'text' },
+        { key: 'job_role', label: 'Job Role', icon: BriefcaseBusiness, type: 'text' },
         { key: 'linkedin', label: 'LinkedIn Profile', icon: LinkedinIcon, type: 'url' },
         { key: 'website', label: 'Portfolio Website', icon: Globe, type: 'url' }
     ]

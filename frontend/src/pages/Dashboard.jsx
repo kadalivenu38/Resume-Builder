@@ -1,6 +1,5 @@
-import { FilePenLineIcon, PencilIcon, PlusIcon, TrashIcon, UploadCloud, UploadCloudIcon, XIcon } from 'lucide-react'
+import { FilePenLineIcon, LoaderCircleIcon, PencilIcon, PlusIcon, TrashIcon, UploadCloud, UploadCloudIcon, XIcon } from 'lucide-react'
 import React, { useEffect, useState } from 'react'
-import { dummyResumeData } from '../assets/assets'
 import { useNavigate } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import api from '../configs/api'
@@ -24,12 +23,22 @@ const Dashboard = () => {
   const navigate = useNavigate()
 
   const loadAllResumes = async () => {
-    setAllResumes(dummyResumeData)
+    try {
+      const { data } = await api.get('/api/user/resumes',
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        })
+      setAllResumes(data.resumes)
+    } catch (err) {
+      toast.error(err?.response?.data?.message || err.message)
+    }
   }
   const createResume = async (e) => {
     try {
       e.preventDefault();
-      const { data } = await api.post('/api/resume/create', { title, },
+      const { data } = await api.post('/api/resume/create', { title },
         {
           headers: {
             Authorization: `Bearer ${token}`
@@ -43,6 +52,7 @@ const Dashboard = () => {
       toast.error(err?.response?.data?.message || err.message)
     }
   }
+
   const uploadResume = async (e) => {
     e.preventDefault()
     try {
@@ -70,13 +80,40 @@ const Dashboard = () => {
     }
     setIsLoading(false)
   }
+
   const editTitle = async (e) => {
-    e.preventDefault()
+    try {
+      e.preventDefault()
+      const { data } = await api.put(`/api/resume/update`, { resumeId: editResumeId, resumeData: {title}},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        })
+      setAllResumes(allResumes.map(resume => resume._id === editResumeId ? { ...resume, title } : resume))
+      setEditResumeId('')
+      setTitle('')
+      toast.success(data.message)
+    } catch (err) {
+      toast.error(err?.response?.data?.message || err.message)
+    }
   }
+
   const deleteResume = async (resumeId) => {
-    const confirmDelete = window.confirm('Are you sure you want to delete this resume?')
-    if (confirmDelete) {
-      setAllResumes((prev) => prev.filter((resume) => resume._id !== resumeId))
+    try {
+      const confirmDelete = window.confirm('Are you sure you want to delete this resume?')
+      if (confirmDelete) {
+        const { data } = await api.delete(`/api/resume/delete/${resumeId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`
+            }
+          })
+        setAllResumes(allResumes.filter(resume => resume._id !== resumeId))
+        toast.success(data.message)
+      }
+    } catch (err) {
+      toast.error(err?.response?.data?.message || err.message)
     }
   }
 
@@ -86,21 +123,23 @@ const Dashboard = () => {
 
   return (
     <div>
-      <div className='max-w-7xl mx-auto px-4 py-8'>
-        <p className='text-2xl font-medium mb-6 bg-linear-to-r from-slate-600 to-slate-700 bg-clip-text text-transparent sm:hidden'>Welcome, Kadali Venu</p>
-        <div className='flex gap-4'>
-          <button onClick={() => setShowCreateResume(true)} className='w-full bg-white sm:max-w-36 h-48 flex flex-col items-center justify-center rounded-lg gap-2 text-slate-600 border border-dashed border-slate-300 group hover:border-indigo-500 hover:shadow-lg transition-all duration-300 cursor-pointer'>
+      <div className='max-w-8xl mx-16 py-8'>
+        <p className='text-3xl font-medium mb-6 bg-linear-to-t from-green-600 to-slate-500 bg-clip-text text-transparent'>Welcome, {user?.name}</p>
+        <div className='flex gap-6'>
+          <button onClick={() => setShowCreateResume(true)} className='w-full bg-white sm:max-w-36 h-48 flex flex-col items-center justify-center
+           rounded-lg gap-2 text-slate-600 border border-dashed border-slate-300 group hover:border-indigo-500 hover:shadow-lg transition-all duration-300 cursor-pointer'>
             <PlusIcon className='size-11 transition-all duration-300 p-2.5 bg-linear-to-br from-indigo-300 to-indigo-500 text-white rounded-full' />
             <p className='text-sm group-hover:text-indigo-600 transition-all duration-300'>Create Resume</p>
           </button>
-          <button onClick={() => setShowUploadResume(true)} className='w-full bg-white sm:max-w-36 h-48 flex flex-col items-center justify-center rounded-lg gap-2 text-slate-600 border border-dashed border-slate-300 group hover:border-purple-500 hover:shadow-lg transition-all duration-300 cursor-pointer'>
+          <button onClick={() => setShowUploadResume(true)} className='w-full bg-white sm:max-w-36 h-48 flex flex-col items-center justify-center
+           rounded-lg gap-2 text-slate-600 border border-dashed border-slate-300 group hover:border-purple-500 hover:shadow-lg transition-all duration-300 cursor-pointer'>
             <UploadCloudIcon className='size-11 transition-all duration-300 p-2.5 bg-linear-to-br from-purple-300 to-purple-500 text-white rounded-full' />
             <p className='text-sm group-hover:text-purple-600 transition-all duration-300'>Upload Existing</p>
           </button>
         </div>
 
         <hr className="border-t border-slate-400 my-8" />
-        <div className='grid grid-cols-2 sm:flex flex-wrap gap-4'>
+        <div className='grid grid-cols-2 sm:flex flex-wrap gap-6'>
           {allResumes.map((resume, idx) => {
             const baseColor = colors[idx % colors.length]
             return (
@@ -127,12 +166,12 @@ const Dashboard = () => {
         {showCreateResume && (
           <form onSubmit={createResume} className='fixed inset-0 bg-black/70 backdrop-blur bg-opacity-50 z-10 flex items-center justify-center'>
             <div onClick={(e) => { e.stopPropagation() }} className='relative bg-slate-50 shadow-md rounded-lg w-full max-w-sm p-6'>
-              <h2 className='text-xl font-bold mb-4'>Edit Resume Title</h2>
+              <h2 className='text-xl font-bold mb-4'>Create your Resume</h2>
               <input type="text" placeholder='Enter resume Title' value={title} onChange={(e) => setTitle(e.target.value)}
-                className='w-full px-4 py-2 mb-4 focus:border-green-600 ring-green-600' required />
+                className='w-full px-4 py-2 mb-4 focus:border-green-600 ring-green-600' />
               <button className='w-full py-2 bg-green-600 text-white rounded hover:bg-green-700 transition-colors'>Upload</button>
               <XIcon className='absolute top-4 right-4 text-slate-400 hover:text-slate-600 cursor-pointer transition-colors' onClick={() => {
-                setEditResumeId('');
+                setShowCreateResume(false);
                 setTitle('');
               }} />
             </div>
@@ -180,8 +219,9 @@ const Dashboard = () => {
                 }} />
               </div>
               <button className='w-full py-2 bg-green-600 text-white rounded hover:bg-green-700 transition-colors disabled:opacity-50
-               disabled:cursor-not-allowed' disabled={!resume || isLoading}>
-                Upload Resume
+               disabled:cursor-not-allowed flex items-center justify-center gap-2' disabled={!resume || isLoading}>
+                {isLoading && <LoaderCircleIcon className='animate-spin size-4 text-white'/>}
+                {isLoading ? 'Uploading...' : 'Upload Resume'}
               </button>
               <XIcon className='absolute top-4 right-4 text-slate-400 hover:text-slate-600 cursor-pointer transition-colors' onClick={() => {
                 setShowUploadResume(false);
