@@ -18,7 +18,7 @@ export const enhanceSummary = async (req, res) => {
         {
           role: "system",
           content:
-            "You are an expert in Resume writing. Your task is to enhance the professional summary of a resume. The summary should be 1-2 sentences also highlighting key skills, experience and career objectives. Make it compelling and ATS-friendly. Return only the enhanced summary text, nothing else.",
+            "You are an expert in Resume writing. Your task is to enhance the professional summary of a resume. The summary should be 1-2 sentences only, also highlighting key skills, experience and career objectives. Make it compelling and ATS-friendly. Return only the enhanced summary text, nothing else.",
         },
         {
           role: "user",
@@ -30,6 +30,13 @@ export const enhanceSummary = async (req, res) => {
 
     return res.status(200).json({ summary: enhancedSummary });
   } catch (err) {
+    console.log(err);
+
+    if (err.status === 429) {
+      return res.status(429).json({
+        message: "AI quota exceeded. Please try again later.",
+      });
+    }
     return res.status(500).json({ message: err.message });
   }
 };
@@ -37,31 +44,59 @@ export const enhanceSummary = async (req, res) => {
 // controller for AI-enhanced Job Description
 export const enhanceDescription = async (req, res) => {
   try {
-    const { description } = req.body;
-    if (!description) {
-      return res.status(400).json({ message: "Description is required" });
+    const { prompt } = req.body;
+
+    if (!prompt) {
+      return res.status(400).json({
+        message: "Experience data is required",
+      });
     }
 
-    // Call the AI service to enhance the summary
     const response = await openai.chat.completions.create({
       model: "gemini-3.5-flash",
       messages: [
         {
           role: "system",
-          content:
-            "You are an expert in Resume writing. Your task is to enhance the Job Description / Project Description of a resume. The job description should be 1-2 sentences also highlighting responsibilities and achievements. Use action verbs and quantifiable results where possible. Make it ATS-friendly. Return only the enhanced text, nothing else.",
+          content: `You are an expert ATS Resume Writer and Career Coach.
+            Your task is to rewrite a job or project description into strong resume achievement statements.
+
+            Rules:
+            - Generate exactly 3 statements.
+            - Each statement must be on a new line.
+            - Do NOT use bullet symbols or numbering.
+            - Each statement should be 15-25 words maximum.
+            - Begin each statement with a strong action verb.
+            - Focus on accomplishments, not responsibilities.
+            - Include technologies, tools, or methodologies when relevant.
+            - Include measurable impact whenever possible using numbers, percentages, counts, time savings, performance improvements, user growth, cost reduction, or efficiency gains.
+            - If the user does not provide measurable metrics, infer realistic metrics conservatively and naturally.
+            - Make the content ATS-friendly.
+            - Return only the 3 statements separated by line breaks without any blank space lines.`
         },
         {
           role: "user",
-          content: description,
+          content: prompt,
         },
       ],
     });
+
     const enhancedDescription = response.choices[0].message.content;
 
-    return res.status(200).json({ summary: enhancedDescription });
+    return res.status(200).json({
+      enhancedDescription,
+    });
   } catch (err) {
-    return res.status(500).json({ message: err.message });
+    console.error(err);
+
+    if (err.status === 429) {
+      return res.status(429).json({
+        message: "AI quota exceeded. Please try again later.",
+      });
+    }
+
+    return res.status(500).json({
+      message: err.message,
+    });
   }
 };
 
@@ -216,6 +251,14 @@ export const extractResumeData = async (req, res) => {
 
     return res.status(201).json({ resumeId: newResume._id });
   } catch (err) {
+    console.log(err);
+
+    if (err.status === 429) {
+      return res.status(429).json({
+        message: "AI quota exceeded. Please try again later.",
+      });
+    }
+
     if (err.code === "LIMIT_FILE_SIZE") {
       return res.status(400).json({
         success: false,

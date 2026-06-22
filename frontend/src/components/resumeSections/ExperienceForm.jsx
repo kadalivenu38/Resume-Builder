@@ -1,7 +1,31 @@
-import { Briefcase, Plus, Sparkles, Trash2 } from 'lucide-react'
-import React from 'react'
+import { Briefcase, Loader2, Plus, Sparkles, Trash2 } from 'lucide-react'
+import React, { useState } from 'react'
+import toast from 'react-hot-toast'
+import { useSelector } from 'react-redux'
+import api from '../../configs/api'
 
 const ExperienceForm = ({ data, onChange }) => {
+    const { token } = useSelector(state => state.auth)
+    const [generatingIdx, setGeneratingIdx] = useState(-1)
+
+    const enhanceDescription = async (idx) => {
+        try {
+            setGeneratingIdx(idx)
+            const experience = data[idx]
+            const prompt = `enhance this job description - "${experience.description}" for the position of ${experience.position} at ${experience.company}`
+            const res = await api.post('/api/ai/enhance-job-desc', { prompt }, {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            })
+            updateExperience(idx, "description", res.data.enhancedDescription)
+        } catch (err) {
+            toast.error(err?.response?.data?.message || err.message)
+        } finally {
+            setGeneratingIdx(-1)
+        }
+    }
+
     const addExperience = () => {
         const newExperience = {
             company: '',
@@ -67,19 +91,21 @@ const ExperienceForm = ({ data, onChange }) => {
                                     className='px-3 py-2 text-sm rounded-lg disabled:bg-gray-100' disabled={experience.is_current} />
                             </div>
                             <label className='flex items-center gap-1'>
-                                <input type="checkbox" checked={experience.is_current} onChange={(e) => updateExperience(index, 'is_current', e.target.checked)}/>
+                                <input type="checkbox" checked={experience.is_current} onChange={(e) => updateExperience(index, 'is_current', e.target.checked)} />
                                 <span className='text-sm text-gray-700'>Currently working here</span>
                             </label>
                             <div className='space-y-3 mt-5'>
                                 <div className='flex items-center justify-between'>
                                     <label className='text-sm font-medium text-gray-700'>Job Description</label>
-                                    <button className='flex items-center gap-2 px-3 py-1 text-sm bg-purple-100 text-purple-700 rounded
-                                    hover:bg-purple-300 transition-colors disabled:opacity-50'>
-                                        <Sparkles className='size-4' />AI Enhance
+                                    <button onClick={()=> enhanceDescription(index)} disabled={generatingIdx === index || !experience.position || !experience.company || !experience.description}
+                                      className='flex items-center gap-2 px-3 py-1 text-sm bg-purple-100 text-purple-700 rounded hover:bg-purple-300
+                                      transition-colors disabled:opacity-50 disabled:cursor-not-allowed'>
+                                        {generatingIdx === index ? (<Loader2 className='animate-spin size-4' />) : (<Sparkles className='size-4' />)}
+                                        {generatingIdx === index ? "Enhancing..." : "AI Enhance"}
                                     </button>
                                 </div>
-                                <textarea rows={4} value={experience.description || ''} onChange={(e)=> updateExperience(index, 'description', e.target.value)}
-                                className='w-full text-sm px-3 py-2 rounded-lg resize-none' placeholder='Describe your key responsibilities and achievements...'/>
+                                <textarea rows={4} value={experience.description || ''} onChange={(e) => updateExperience(index, 'description', e.target.value)}
+                                    className='w-full text-sm px-3 py-2 rounded-lg resize-none' placeholder='Describe your key responsibilities and achievements...' />
                             </div>
                         </div>
                     ))}

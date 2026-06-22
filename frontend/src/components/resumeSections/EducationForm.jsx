@@ -4,12 +4,12 @@ import React from 'react'
 const EducationForm = ({ data, onChange }) => {
     const addEducation = () => {
         const newEducation = {
-            institute: '',
+            institution: '',
             degree: '',
-            field: '',
-            gpa: '',
+            field_of_study: '',
+            score: '',
             start_date: '',
-            end_date: '',
+            graduation_date: '',
             is_current: false
         }
         onChange([...data, newEducation])
@@ -58,17 +58,17 @@ const EducationForm = ({ data, onChange }) => {
 
                             {/* Input for Education Details */}
                             <div className='grid md:grid-cols-2 gap-3 mb-1'>
-                                <input type="text" value={education.institute || ""} onChange={(e) => updateEducation(index, 'institute', e.target.value)}
+                                <input type="text" value={education.institution || ""} onChange={(e) => updateEducation(index, 'institute', e.target.value)}
                                     placeholder='Institute Name' className='px-3 py-2 text-sm rounded-lg' />
                                 <input type="text" value={education.degree || ""} onChange={(e) => updateEducation(index, 'degree', e.target.value)}
                                     placeholder='Degree' className='px-3 py-2 text-sm rounded-lg' />
-                                <input type="text" value={education.field || ""} onChange={(e) => updateEducation(index, 'field', e.target.value)}
+                                <input type="text" value={education.field_of_study || ""} onChange={(e) => updateEducation(index, 'field', e.target.value)}
                                     placeholder='Field of Study' className='px-3 py-2 text-sm rounded-lg' />
-                                <input type="number" step="0.01" min="0" max="10" value={education.gpa || ""} className='px-3 py-2 text-sm rounded-lg'
-                                    onChange={(e) => updateEducation(index, 'gpa', e.target.value)} placeholder='GPA' />
+                                <input type="number" step="0.01" min="0" max="10" value={education.score || ""} className='px-3 py-2 text-sm rounded-lg'
+                                    onChange={(e) => updateEducation(index, 'score', e.target.value)} placeholder='GPA' />
                                 <input type="month" value={education.start_date || ""} onChange={(e) => updateEducation(index, 'start_date', e.target.value)}
                                     className='px-3 py-2 text-sm rounded-lg' />
-                                <input type="month" value={education.is_current ? "" : education.end_date} onChange={(e) => updateEducation(index, 'end_date', e.target.value)}
+                                <input type="month" value={education.is_current ? "" : education.graduation_date} onChange={(e) => updateEducation(index, 'graduation_date', e.target.value)}
                                     className='px-3 py-2 text-sm rounded-lg disabled:bg-gray-100' disabled={education.is_current} />
                             </div>
                             <label className='flex items-center gap-1'>

@@ -14,19 +14,20 @@ const MinimalImageTemplate = ({ data, accentColor }) => {
         <div className="max-w-5xl mx-auto bg-white text-zinc-800">
             <div className="grid grid-cols-3">
 
-                <div className="col-span-1  py-10">
-                    {/* Image */}
-                    {data.personal_info?.image && typeof data.personal_info.image === 'string' ? (
-                        <div className="mb-6">
-                            <img src={data.personal_info.image} alt="Profile" className="w-32 h-32 object-cover rounded-full mx-auto" style={{ background: accentColor+'70' }} />
+                {/* Image */}
+                <div className="col-span-1 py-10">
+                    {data.personal_info?.image &&
+                        typeof data.personal_info.image === "string" ? (
+                        <div className="w-32 h-32 rounded-full overflow-hidden mx-auto flex items-center justify-center"
+                            style={{ backgroundColor: accentColor + "40" }}>
+                            <img src={data.personal_info.image} className="w-full h-full object-contain" />
                         </div>
-                    ) : (
-                        data.personal_info?.image && typeof data.personal_info.image === 'object' ? (
-                            <div className="mb-6">
-                                <img src={URL.createObjectURL(data.personal_info.image)} alt="Profile" className="w-32 h-32 object-cover rounded-full mx-auto" />
-                            </div>
-                        ) : null
-                    )}
+                    ) : data.personal_info?.image &&
+                        typeof data.personal_info.image === "object" ? (
+                        <div className="w-32 h-32 rounded-full overflow-hidden mx-auto flex items-center justify-center">
+                            <img src={URL.createObjectURL(data.personal_info.image)} className="w-full h-full object-contain" />
+                        </div>
+                    ) : null}
                 </div>
 
                 {/* Name + Title */}
@@ -155,17 +156,17 @@ const MinimalImageTemplate = ({ data, accentColor }) => {
                     )}
 
                     {/* Projects */}
-                    {data.project && data.project.length > 0 && (
+                    {data.projects && data.projects.length > 0 && (
                         <section>
                             <h2 className="text-sm uppercase tracking-widest font-semibold" style={{ color: accentColor }}>
                                 PROJECTS
                             </h2>
                             <div className="space-y-4">
-                                {data.project.map((project, index) => (
+                                {data.projects.map((project, index) => (
                                     <div key={index}>
                                         <h3 className="text-md font-medium text-zinc-800 mt-3">{project.name}</h3>
                                         <p className="text-sm mb-1" style={{ color: accentColor }} >
-                                            {project.type}
+                                            Technologies Used: {project.tech_stack}
                                         </p>
                                         {project.description && (
                                             <ul className="list-disc list-inside text-sm text-zinc-700  space-y-1">

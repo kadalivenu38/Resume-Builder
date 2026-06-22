@@ -110,14 +110,14 @@ const ResumeBuilder = () => {
 
   return (
     <div>
-      <div className='max-w-7xl mx-auto px-4 py-6'>
+      <div className='max-w-8xl mx-auto px-4 py-6'>
         <Link to={'/app'} className='inline-flex gap-1 items-center text-slate-500 hover:text-slate-700 transition-colors'>
           <ArrowLeftIcon className='size-5' /> Back to Dashboard
         </Link>
       </div>
 
-      <div className='max-w-7xl mx-auto px-4 pb-8'>
-        <div className='grid lg:grid-cols-12 gap-8'>
+      <div className='max-w-8xl mx-auto px-18 pb-8'>
+        <div className='grid lg:grid-cols-12 gap-6'>
           {/* Left Panel - Form */}
           <div className='relative lg:col-span-5 rounded-lg overflow-hidden'>
             <div className='bg-white rounded-lg shadow-sm border border-gray-200 p-6 pt-1'>

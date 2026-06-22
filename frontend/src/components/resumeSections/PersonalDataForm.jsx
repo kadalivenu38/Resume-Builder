@@ -25,8 +25,8 @@ const PersonalDataForm = ({ data, onChange, template, removeBackground, setRemov
                 <div className='flex items-center gap-2'>
                     <label>
                         {data.image ? (
-                            <img src={typeof data.image === 'string' ? data.image : URL.createObjectURL(data.image)} alt="user-image"
-                                className='w-20 h-20 rounded-full object-cover mt-2 ring-black-500 hover:opacity-80 cursor-pointer' />
+                            <img src={typeof data.image === 'string' ? data.image : URL.createObjectURL(data.image)} alt="profile.img"
+                                className='w-20 h-20 rounded-full object-contain mt-2 ring ring-gray-500 hover:opacity-80 cursor-pointer' />
                         ) : (
                             <div className='inline-flex items-center gap-2 mt-2 text-slate-500 hover:text-slate-800 cursor-pointer'>
                                 <User className='size-11 p-2.5 border rounded-full' />

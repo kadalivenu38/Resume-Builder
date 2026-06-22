@@ -37,6 +37,7 @@ const resumeSchema = new mongoose.Schema({
         {
             name: { type: String },
             description: { type: String },
+            tech_stack: {type: String},
             link: { type: String },
         }
     ],

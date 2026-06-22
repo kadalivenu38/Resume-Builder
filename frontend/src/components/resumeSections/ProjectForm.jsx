@@ -1,12 +1,37 @@
-import { Plus, Trash2, Sparkles, FolderGit2 } from 'lucide-react'
-import React from 'react'
+import { Plus, Trash2, Sparkles, FolderGit2, Loader2 } from 'lucide-react'
+import React, { useState } from 'react'
+import api from '../../configs/api'
+import toast from 'react-hot-toast'
+import { useSelector } from 'react-redux'
 
 const ProjectForm = ({ data, onChange }) => {
+  const { token } = useSelector(state => state.auth)
+  const [generatingIdx, setGeneratingIdx] = useState(-1)
+
+  const enhanceDescription = async (idx) => {
+    try {
+      setGeneratingIdx(idx)
+      const project = data[idx]
+      const prompt = `Enhance this project description - "${project.description}" for the ${project.name} built using ${project.tech_stack}`
+      const res = await api.post('/api/ai/enhance-project-desc', { prompt }, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      })
+      updateProject(idx, "description", res.data.enhancedDescription)
+    } catch (err) {
+      toast.error(err?.response?.data?.message || err.message)
+    } finally {
+      setGeneratingIdx(-1)
+    }
+  }
+
   const addProject = () => {
     const newProject = {
       name: '',
-      stack: '',
+      tech_stack: '',
       description: '',
+      link: ''
     }
     onChange([...data, newProject])
   }
@@ -56,15 +81,16 @@ const ProjectForm = ({ data, onChange }) => {
               <div className='grid md:grid-cols-2 gap-3 mb-1'>
                 <input type="text" value={project.name || ""} onChange={(e) => updateProject(index, 'name', e.target.value)}
                   placeholder='Project Name' className='px-3 py-2 text-sm rounded-lg' />
-                <input type="text" value={project.stack || ""} onChange={(e) => updateProject(index, 'stack', e.target.value)}
+                <input type="text" value={project.tech_stack || ""} onChange={(e) => updateProject(index, 'tech_stack', e.target.value)}
                   placeholder='Tech Stack' className='px-3 py-2 text-sm rounded-lg' maxLength={75} />
               </div>
               <div className='space-y-3 mt-5'>
                 <div className='flex items-center justify-between'>
                   <label className='text-sm font-medium text-gray-700'>Project Description</label>
-                  <button className='flex items-center gap-1 px-2 py-1 text-sm bg-purple-100 text-purple-700 rounded
-                  hover:bg-purple-300 transition-colors disabled:opacity-50'>
-                    <Sparkles className='size-4' />AI Enhance
+                  <button onClick={() => enhanceDescription(index)} disabled={generatingIdx === index || !project.name || !project.description} className='flex items-center gap-1
+                   px-2 py-1 text-sm bg-purple-100 text-purple-700 rounded hover:bg-purple-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed'>
+                    {generatingIdx === index ? (<Loader2 className='animate-spin size-4' />) : (<Sparkles className='size-4' />)}
+                    {generatingIdx === index ? "Enhancing..." : "AI Enhance"}
                   </button>
                 </div>
                 <textarea rows={5} value={project.description || ''} onChange={(e) => updateProject(index, 'description', e.target.value)}
