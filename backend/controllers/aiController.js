@@ -171,8 +171,6 @@ export const extractResumeData = async (req, res) => {
           Return JSON in exactly this structure:
           {
             "professional_summary": "",
-            "skills": [],
-
             "personal_info": {
               "full_name": "",
               "job_role": "",
@@ -186,6 +184,7 @@ export const extractResumeData = async (req, res) => {
               {
                 "company": "",
                 "position": "",
+                "location": "",
                 "start_date": "",
                 "end_date": "",
                 "description": "",
@@ -209,6 +208,28 @@ export const extractResumeData = async (req, res) => {
                 "score": "",
                 "is_current": false
               }
+            ],
+            "skills":
+              {
+                "programming_languages": [],
+                "web_development": [],
+                "databases": [],
+                "cloud_devops": [],
+                "tools_platforms": [],
+                "ai_ml": []
+              },
+            certifications: [
+              {
+                "name": "",
+                "issuer": "",
+                "date": "",
+                "credential_url": ""
+              }
+            ],
+            achievements: [
+              {
+                "contents": ""
+              }
             ]
           }`,
         },
@@ -227,10 +248,6 @@ export const extractResumeData = async (req, res) => {
       });
     }
 
-    parsedData.skills = Array.isArray(parsedData.skills)
-      ? parsedData.skills
-      : [];
-
     parsedData.experience = Array.isArray(parsedData.experience)
       ? parsedData.experience
       : [];
@@ -241,6 +258,14 @@ export const extractResumeData = async (req, res) => {
 
     parsedData.education = Array.isArray(parsedData.education)
       ? parsedData.education
+      : [];
+    
+    parsedData.certifications = Array.isArray(parsedData.certifications)
+      ? parsedData.certifications
+      : [];
+    
+    parsedData.achievements = Array.isArray(parsedData.achievements)
+      ? parsedData.achievements
       : [];
 
     const newResume = await Resume.create({

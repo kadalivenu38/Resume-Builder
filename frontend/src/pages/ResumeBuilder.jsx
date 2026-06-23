@@ -13,6 +13,8 @@ import SkillsForm from '../components/resumeSections/SkillsForm'
 import { useSelector } from 'react-redux'
 import api from '../configs/api'
 import toast from 'react-hot-toast'
+import AchievementsForm from '../components/resumeSections/AchievementsForm'
+import CertificationsForm from '../components/resumeSections/CertificationsForm'
 
 const ResumeBuilder = () => {
   const { token } = useSelector(state => state.auth)
@@ -25,7 +27,14 @@ const ResumeBuilder = () => {
     experience: [],
     projects: [],
     education: [],
-    skills: [],
+    skills: {
+      languages: [],
+      development: [],
+      cloud: [],
+      tools: []
+    },
+    achievements: [],
+    certifications: [],
     template: 'classic',
     accent_color: '#3B82F6',
     public: false,
@@ -33,7 +42,7 @@ const ResumeBuilder = () => {
   const [activeSectionIdx, setActiveSectionIdx] = useState(0)
   const [removeBackground, setRemoveBackground] = useState(false)
 
-  const sections = ['personal', 'summary', 'experience', 'education', 'projects', 'skills']
+  const sections = ['personal', 'summary', 'education', 'experience', 'projects', 'skills', 'certifications', 'achievements']
 
   const existingResume = async () => {
     try {
@@ -161,17 +170,23 @@ const ResumeBuilder = () => {
                 {sections[activeSectionIdx] === 'summary' && (
                   <SummaryForm data={resumeData.professional_summary} onChange={(data) => setResumeData(prev => ({ ...prev, professional_summary: data }))} setResumeData={setResumeData} />
                 )}
-                {sections[activeSectionIdx] === 'experience' && (
-                  <ExperienceForm data={resumeData.experience} onChange={(data) => setResumeData(prev => ({ ...prev, experience: data }))} />
-                )}
                 {sections[activeSectionIdx] === 'education' && (
                   <EducationForm data={resumeData.education} onChange={(data) => setResumeData(prev => ({ ...prev, education: data }))} />
+                )}
+                {sections[activeSectionIdx] === 'experience' && (
+                  <ExperienceForm data={resumeData.experience} onChange={(data) => setResumeData(prev => ({ ...prev, experience: data }))} />
                 )}
                 {sections[activeSectionIdx] === 'projects' && (
                   <ProjectForm data={resumeData.projects} onChange={(data) => setResumeData(prev => ({ ...prev, projects: data }))} />
                 )}
                 {sections[activeSectionIdx] === 'skills' && (
                   <SkillsForm data={resumeData.skills} onChange={(data) => setResumeData(prev => ({ ...prev, skills: data }))} />
+                )}
+                {sections[activeSectionIdx] === 'certifications' && (
+                  <CertificationsForm data={resumeData.certifications} onChange={(data) => setResumeData(prev => ({ ...prev, certifications: data }))} />
+                )}
+                {sections[activeSectionIdx] === 'achievements' && (
+                  <AchievementsForm data={resumeData.achievements} onChange={(data) => setResumeData(prev => ({ ...prev, achievements: data }))} />
                 )}
               </div>
               <button onClick={() =>
@@ -188,7 +203,7 @@ const ResumeBuilder = () => {
 
           {/* Right Panel - Preview */}
           <div className='lg:col-span-7 max-lg:mt-6'>
-            <div className='relative w-full'>
+            <div className='relative w-full mt-8'>
               <div className='absolute bottom-3 left-0 right-0 flex items-center justify-end gap-2'>
                 {resumeData.public && (
                   <button onClick={handleShare} className='flex items-center p-2 px-4 gap-2 text-sm bg-linear-to-br from-blue-100 to-blue-200

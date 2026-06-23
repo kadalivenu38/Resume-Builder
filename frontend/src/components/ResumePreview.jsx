@@ -3,10 +3,13 @@ import ModernTemplate from './templates/ModernTemplate'
 import ClassicTemplate from './templates/ClassicTemplate'
 import MinimalTemplate from './templates/MinimalTemplate'
 import MinimalImageTemplate from './templates/MinimalImageTemplate'
+import ATSProfessionalTemplate from './templates/ATSProfessionalTemplate'
 
 const ResumePreview = ({ data, template, accentColor, classes = "" }) => {
   const renderTemplate = () => {
     switch (template) {
+      case 'ats-friendly':
+        return <ATSProfessionalTemplate data={data} accentColor={accentColor} />
       case 'modern':
         return <ModernTemplate data={data} accentColor={accentColor} />
       case 'minimal':

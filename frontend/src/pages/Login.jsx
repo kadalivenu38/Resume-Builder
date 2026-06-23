@@ -64,7 +64,7 @@ const Login = () => {
         </div>
 
         <div className="mt-4 text-left">
-          <button className="text-sm text-green-400 hover:underline">
+          <button onClick={()=> toast.error("Didn't developed yet.")} className="text-sm text-green-400 hover:underline">
             Forget password?
           </button>
         </div>

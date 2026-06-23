@@ -64,8 +64,8 @@ const EducationForm = ({ data, onChange }) => {
                                     placeholder='Degree' className='px-3 py-2 text-sm rounded-lg' />
                                 <input type="text" value={education.field_of_study || ""} onChange={(e) => updateEducation(index, 'field', e.target.value)}
                                     placeholder='Field of Study' className='px-3 py-2 text-sm rounded-lg' />
-                                <input type="number" step="0.01" min="0" max="10" value={education.score || ""} className='px-3 py-2 text-sm rounded-lg'
-                                    onChange={(e) => updateEducation(index, 'score', e.target.value)} placeholder='GPA' />
+                                <input type="text" value={education.score || ""} className='px-3 py-2 text-sm rounded-lg'
+                                    onChange={(e) => updateEducation(index, 'score', e.target.value)} placeholder='Score' />
                                 <input type="month" value={education.start_date || ""} onChange={(e) => updateEducation(index, 'start_date', e.target.value)}
                                     className='px-3 py-2 text-sm rounded-lg' />
                                 <input type="month" value={education.is_current ? "" : education.graduation_date} onChange={(e) => updateEducation(index, 'graduation_date', e.target.value)}
