@@ -86,9 +86,11 @@ const ExperienceForm = ({ data, onChange }) => {
                                 <input type="text" value={experience.position || ""} onChange={(e) => updateExperience(index, 'position', e.target.value)}
                                     placeholder='Job Title' className='px-3 py-2 text-sm rounded-lg' />
                                 <input type="month" value={experience.start_date || ""} onChange={(e) => updateExperience(index, 'start_date', e.target.value)}
-                                    className='px-3 py-2 text-sm rounded-lg' />
+                                    onFocus={(e) => e.target.showPicker?.()}
+                                    className='px-3 py-2 text-sm rounded-lg cursor-pointer' />
                                 <input type="month" value={experience.is_current ? "" : experience.end_date} onChange={(e) => updateExperience(index, 'end_date', e.target.value)}
-                                    className='px-3 py-2 text-sm rounded-lg disabled:bg-gray-100' disabled={experience.is_current} />
+                                    onFocus={(e) => e.target.showPicker?.()}
+                                    className='px-3 py-2 text-sm rounded-lg cursor-pointer disabled:bg-gray-100' disabled={experience.is_current} />
                             </div>
                             <label className='flex items-center gap-1'>
                                 <input type="checkbox" checked={experience.is_current} onChange={(e) => updateExperience(index, 'is_current', e.target.checked)} />

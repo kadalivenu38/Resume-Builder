@@ -149,12 +149,19 @@ const ModernTemplate = ({ data, accentColor }) => {
 					)}
 
 					{/* Skills */}
-					{data.skills && data.skills.length > 0 && (
-						<section>
-							<h2 className="text-2xl font-light mb-4 pb-2 border-b border-gray-200">
-								Skills
-							</h2>
-
+							{(() => {
+								const skills = Array.isArray(data.skills)
+									? data.skills
+									: data.skills
+										? Object.values(data.skills).flatMap((group) =>
+											Array.isArray(group) ? group : []
+										)
+										: []
+								return skills.length > 0 ? (
+									<section>
+										<h2 className="text-2xl font-light mb-4 pb-2 border-b border-gray-200">
+											Skills
+										</h2>
 							<div className="flex flex-wrap gap-2">
 								{data.skills.map((skill, index) => (
 									<span
@@ -167,7 +174,9 @@ const ModernTemplate = ({ data, accentColor }) => {
 								))}
 							</div>
 						</section>
-					)}
+							) : null
+						})()}
+
 				</div>
 			</div>
 		</div>

@@ -171,7 +171,12 @@ export const extractResumeData = async (req, res) => {
           Return JSON in exactly this structure:
           {
             "professional_summary": "",
-            "skills": [],
+            "skills": {
+              "languages": [],
+              "development": [],
+              "cloud": [],
+              "tools": []
+            },
 
             "personal_info": {
               "full_name": "",
@@ -227,9 +232,37 @@ export const extractResumeData = async (req, res) => {
       });
     }
 
-    parsedData.skills = Array.isArray(parsedData.skills)
-      ? parsedData.skills
-      : [];
+    const normalizeSkills = (skills) => {
+      if (Array.isArray(skills)) {
+        return {
+          languages: skills,
+          development: [],
+          cloud: [],
+          tools: [],
+        }
+      }
+
+      if (skills && typeof skills === "object") {
+        return {
+          languages:
+            skills.languages || skills.programmingLanguages || skills["Programming Languages"] || [],
+          development: skills.development || skills["Development"] || [],
+          cloud:
+            skills.cloud || skills.cloudDevOps || skills["Cloud / DevOps"] || skills["Cloud / Devops"] || [],
+          tools:
+            skills.tools || skills.toolsPlatforms || skills["Tools / Platforms"] || [],
+        }
+      }
+
+      return {
+        languages: [],
+        development: [],
+        cloud: [],
+        tools: [],
+      }
+    }
+
+    parsedData.skills = normalizeSkills(parsedData.skills)
 
     parsedData.experience = Array.isArray(parsedData.experience)
       ? parsedData.experience

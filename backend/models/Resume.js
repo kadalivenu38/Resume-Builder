@@ -7,7 +7,12 @@ const resumeSchema = new mongoose.Schema({
     template: { type: String, default: "classic" },
     accent_color: { type: String, default: "#3B82F6" },
     professional_summary: { type: String, default: '' },
-    skills: [{ type: String }],
+    skills: {
+        languages: [{ type: String, default: '' }],
+        development: [{ type: String, default: '' }],
+        cloud: [{ type: String, default: '' }],
+        tools: [{ type: String, default: '' }],
+    },
     personal_info: {
         image: { type: String, default: '' },
         full_name: { type: String, default: '' },
@@ -39,6 +44,19 @@ const resumeSchema = new mongoose.Schema({
             description: { type: String },
             tech_stack: {type: String},
             link: { type: String },
+        }
+    ],
+    certifications: [
+        {
+            name: { type: String },
+            issuer: { type: String },
+            date: { type: String },
+            link: { type: String },
+        }
+    ],
+    achievements: [
+        {
+            point: { type: String },
         }
     ],
     education: [

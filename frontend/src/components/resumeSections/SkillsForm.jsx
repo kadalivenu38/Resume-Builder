@@ -1,63 +1,109 @@
-import { Plus, Sparkles, X } from 'lucide-react'
-import React, { useState } from 'react'
+import { Sparkles } from 'lucide-react'
+import React, { useEffect, useState } from 'react'
+
+const skillSections = [
+  { key: 'languages', label: 'Programming Languages', placeholder: 'Python, Java, C++' },
+  { key: 'development', label: 'Development', placeholder: 'JavaScript, React, Node.js' },
+  { key: 'cloud', label: 'Cloud / DevOps', placeholder: 'AWS, Azure, Terraform' },
+  { key: 'tools', label: 'Tools / Platforms', placeholder: 'Git, Docker, Figma' },
+]
+
+const getInitialSkillFields = (data) => {
+  const initial = {
+    languages: '',
+    development: '',
+    cloud: '',
+    tools: '',
+  }
+
+  if (Array.isArray(data)) {
+    initial.development = data.join(', ')
+    return initial
+  }
+
+  if (data && typeof data === 'object') {
+    return {
+      languages: Array.isArray(data.languages)
+        ? data.languages.join(', ')
+        : Array.isArray(data.programmingLanguages)
+          ? data.programmingLanguages.join(', ')
+          : '',
+      development: Array.isArray(data.development)
+        ? data.development.join(', ')
+        : '',
+      cloud: Array.isArray(data.cloud)
+        ? data.cloud.join(', ')
+        : Array.isArray(data.cloudDevOps)
+          ? data.cloudDevOps.join(', ')
+          : '',
+      tools: Array.isArray(data.tools)
+        ? data.tools.join(', ')
+        : Array.isArray(data.toolsPlatforms)
+          ? data.toolsPlatforms.join(', ')
+          : '',
+    }
+  }
+
+  return initial
+}
+
+const splitSkills = (value) =>
+  String(value)
+    .split(',')
+    .map((item) => item.trim())
+    .filter(Boolean)
+
+const getSkillsFromFields = (fields) => ({
+  languages: splitSkills(fields.languages),
+  development: splitSkills(fields.development),
+  cloud: splitSkills(fields.cloud),
+  tools: splitSkills(fields.tools),
+})
 
 const SkillsForm = ({ data, onChange }) => {
-  const [newSkill, setNewSkill] = useState("")
+  const [skillFields, setSkillFields] = useState(() => getInitialSkillFields(data))
 
-  const addSkill = () => {
-    if (newSkill.trim() && !data.includes(newSkill.trim())) {
-      onChange([...data, newSkill.trim()])
-      setNewSkill("")
+  useEffect(() => {
+    const currentSkills = getSkillsFromFields(skillFields)
+    if (JSON.stringify(data || []) !== JSON.stringify(currentSkills)) {
+      setSkillFields(getInitialSkillFields(data))
     }
-  }
-  const removeSkill = (index) => {
-    onChange(data.filter((_, idx) => index !== idx))
-  }
-  const handleKeyPress = (e) => {
-    if (e.key === 'Enter') {
-      e.preventDefault()
-      addSkill()
-    }
+  }, [data])
+
+  const handleFieldChange = (field, value) => {
+    const updatedFields = { ...skillFields, [field]: value }
+    setSkillFields(updatedFields)
+    onChange(getSkillsFromFields(updatedFields))
   }
 
   return (
-    <div className='space-y-4'>
+    <div className='space-y-6'>
       <div>
         <h3 className='flex items-center gap-2 text-lg font-semibold text-gray-900'>Skills</h3>
-        <p className='text-sm text-gray-500'>Add your Technical and Soft skills.</p>
+        <p className='text-sm text-gray-500'>Add your technical and professional strengths in a structured way.</p>
       </div>
 
-      <div className='flex gap-2'>
-        <input type="text" placeholder='Enter a Skill (e.g: JavaScript, Project Management)' className='flex-1 px-3 py-2 text-sm'
-          value={newSkill} onChange={(e) => setNewSkill(e.target.value)} onKeyDown={handleKeyPress} />
-        <button onClick={addSkill} disabled={!newSkill.trim()} className='flex items-center gap-1 px-3 py-1 bg-green-500 text-white
-          rounded-lg hover:bg-green-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed'>
-          <Plus className='size-4' />Add
-        </button>
+      <div className='space-y-4'>
+        {skillSections.map((section) => (
+          <div key={section.key} className='p-4 border border-gray-200 rounded-lg space-y-2 bg-white'>
+            <label className='text-sm font-medium text-gray-700'>{section.label}</label>
+            <input
+              type='text'
+              value={skillFields[section.key] || ''}
+              onChange={(e) => handleFieldChange(section.key, e.target.value)}
+              placeholder={section.placeholder}
+              className='w-full px-3 py-2 text-sm rounded-lg'
+            />
+          </div>
+        ))}
       </div>
-      {data.length > 0 ? (
-        <div className='flex flex-wrap gap-2'>
-          {data.map((skill, index)=> (
-            <span key={index} className='flex items-center pl-3 bg-blue-100 text-blue-900 rounded-full'>
-              {skill}
-              <button onClick={()=> removeSkill(index)} className='flex items-center ml-1 hover:bg-blue-300 rounded-full
-                hover:text-red-700 p-0.5 transition-colors'>
-                <X className='size-4.5'/>
-              </button>
-            </span>
-          ))}
-        </div>
-      ) : (
-        <div className='text-center py-6 text-gray-500'>
-          <Sparkles className='w-10 h-10 mx-auto mb-2 text-gray-300'/>
-          <p>No skills added yet.</p>
-          <p className='text-sm'>Add your technical and soft skills above.</p>
-        </div>
-      )}
 
       <div className='bg-blue-50 p-4 rounded-lg'>
-        <p className='text-sm text-blue-800'><strong>Tip:</strong> Add 8-12 relevant skills. Include both technical skills (programming, languages, tools)
-          and soft skills (leadership, communication).</p>
+        <div className='flex items-center gap-2 text-sm font-medium text-blue-800'>
+          <Sparkles className='size-4' />
+          Tip
+        </div>
+        <p className='mt-1 text-sm text-blue-700'>Separate each skill with a comma. This keeps your resume neat and easy to scan.</p>
       </div>
     </div>
   )

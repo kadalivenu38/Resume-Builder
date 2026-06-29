@@ -67,9 +67,11 @@ const EducationForm = ({ data, onChange }) => {
                                 <input type="number" step="0.01" min="0" max="10" value={education.score || ""} className='px-3 py-2 text-sm rounded-lg'
                                     onChange={(e) => updateEducation(index, 'score', e.target.value)} placeholder='GPA' />
                                 <input type="month" value={education.start_date || ""} onChange={(e) => updateEducation(index, 'start_date', e.target.value)}
-                                    className='px-3 py-2 text-sm rounded-lg' />
+                                    onFocus={(e) => e.target.showPicker?.()}
+                                    className='px-3 py-2 text-sm rounded-lg cursor-pointer' />
                                 <input type="month" value={education.is_current ? "" : education.graduation_date} onChange={(e) => updateEducation(index, 'graduation_date', e.target.value)}
-                                    className='px-3 py-2 text-sm rounded-lg disabled:bg-gray-100' disabled={education.is_current} />
+                                    onFocus={(e) => e.target.showPicker?.()}
+                                    className='px-3 py-2 text-sm rounded-lg cursor-pointer disabled:bg-gray-100' disabled={education.is_current} />
                             </div>
                             <label className='flex items-center gap-1'>
                                 <input type="checkbox" checked={education.is_current} onChange={(e) => updateEducation(index, 'is_current', e.target.checked)} />

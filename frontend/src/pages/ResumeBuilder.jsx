@@ -10,6 +10,8 @@ import ExperienceForm from '../components/resumeSections/ExperienceForm'
 import EducationForm from '../components/resumeSections/EducationForm'
 import ProjectForm from '../components/resumeSections/ProjectForm'
 import SkillsForm from '../components/resumeSections/SkillsForm'
+import CertificationsForm from '../components/resumeSections/CertificationsForm'
+import AchievementsForm from '../components/resumeSections/AchievementsForm'
 import { useSelector } from 'react-redux'
 import api from '../configs/api'
 import toast from 'react-hot-toast'
@@ -25,7 +27,14 @@ const ResumeBuilder = () => {
     experience: [],
     projects: [],
     education: [],
-    skills: [],
+    skills: {
+      languages: [],
+      development: [],
+      cloud: [],
+      tools: [],
+    },
+    certifications: [],
+    achievements: [],
     template: 'classic',
     accent_color: '#3B82F6',
     public: false,
@@ -33,7 +42,7 @@ const ResumeBuilder = () => {
   const [activeSectionIdx, setActiveSectionIdx] = useState(0)
   const [removeBackground, setRemoveBackground] = useState(false)
 
-  const sections = ['personal', 'summary', 'experience', 'education', 'projects', 'skills']
+  const sections = ['personal', 'summary', 'education', 'experience', 'projects', 'skills', 'certifications', 'achievements']
 
   const existingResume = async () => {
     try {
@@ -172,6 +181,12 @@ const ResumeBuilder = () => {
                 )}
                 {sections[activeSectionIdx] === 'skills' && (
                   <SkillsForm data={resumeData.skills} onChange={(data) => setResumeData(prev => ({ ...prev, skills: data }))} />
+                )}
+                {sections[activeSectionIdx] === 'certifications' && (
+                  <CertificationsForm data={resumeData.certifications || []} onChange={(data) => setResumeData(prev => ({ ...prev, certifications: data }))} />
+                )}
+                {sections[activeSectionIdx] === 'achievements' && (
+                  <AchievementsForm data={resumeData.achievements || []} onChange={(data) => setResumeData(prev => ({ ...prev, achievements: data }))} />
                 )}
               </div>
               <button onClick={() =>

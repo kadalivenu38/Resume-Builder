@@ -112,17 +112,26 @@ const MinimalTemplate = ({ data, accentColor }) => {
             )}
 
             {/* Skills */}
-            {data.skills && data.skills.length > 0 && (
-                <section>
-                    <h2 className="text-sm uppercase tracking-widest mb-6 font-medium" style={{ color: accentColor }}>
-                        Skills
-                    </h2>
+            {(() => {
+                const skills = Array.isArray(data.skills)
+                    ? data.skills
+                    : data.skills
+                        ? Object.values(data.skills).flatMap((group) =>
+                            Array.isArray(group) ? group : []
+                        )
+                        : []
+                return skills.length > 0 ? (
+                    <section>
+                        <h2 className="text-sm uppercase tracking-widest mb-6 font-medium" style={{ color: accentColor }}>
+                            Skills
+                        </h2>
 
-                    <div className="text-gray-700">
-                        {data.skills.join(" • ")}
-                    </div>
-                </section>
-            )}
+                        <div className="text-gray-700">
+                            {skills.join(" • ")}
+                        </div>
+                    </section>
+                ) : null
+            })()}
         </div>
     );
 }
